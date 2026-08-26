@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SHIKSHA HUB - Login</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        :root {
+            --bg-dark: #030712;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --gold-light: #fef08a;
+            --gold-main: #eab308;
+            --gold-dark: #ca8a04;
+            --royal-blue: #1d4ed8;
+            --royal-blue-light: #3b82f6;
+            --error-red: #ef4444;
+            --success-green: #10b981;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* --- Ambient Backgrounds --- */
+        .ambient-glow-blue {
+            position: fixed;
+            width: 70vw; height: 70vw; max-width: 600px; max-height: 600px;
+            background: radial-gradient(circle, rgba(29, 78, 216, 0.15) 0%, transparent 60%);
+            top: -10%; left: -10%;
+            border-radius: 50%; filter: blur(60px);
+            z-index: 0;
+            animation: pulse 8s ease-in-out infinite alternate;
+        }
+        
+        .ambient-glow-gold {
+            position: fixed;
+            width: 60vw; height: 60vw; max-width: 500px; max-height: 500px;
+            background: radial-gradient(circle, rgba(234, 179, 8, 0.1) 0%, transparent 70%);
+            bottom: -10%; right: -10%;
+            border-radius: 50%; filter: blur(60px);
+            z-index: 0;
+            animation: pulse 10s ease-in-out infinite alternate-reverse;
+        }
+
+        /* --- UI Components --- */
+        .glass-card {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 420px;
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transform: translateY(20px);
+            opacity: 0;
+            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .logo-glow {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem auto;
+            border-radius: 20px;
+            filter: drop-shadow(0 0 15px rgba(234, 179, 8, 0.3));
+            animation: softGlow 3s infinite alternate;
+        }
+        .logo-glow img { width: 100%; height: 100%; object-fit: contain; }
+
+        /* --- Form Inputs --- */
+        .input-group {
+            position: relative;
+            margin-bottom: 1.25rem;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.4);
+            transition: color 0.3s ease;
+        }
+
+        .premium-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            padding: 14px 16px 14px 48px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .premium-input::placeholder { color: rgba(255, 255, 255, 0.3); }
+
+        .premium-input:focus {
+            border-color: var(--gold-main);
+            box-shadow: 0 0 0 4px rgba(234, 179, 8, 0.1);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .premium-input:focus + .input-icon { color: var(--gold-main); }
+
+        .eye-btn {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.3s ease;
+        }
+        .eye-btn:hover { color: #ffffff; }
+
+        /* --- Buttons --- */
+        .btn-primary {
+            width: 100%;
+            background: linear-gradient(135deg, var(--gold-main), var(--gold-dark));
+            color: var(--bg-dark);
+            font-weight: 700;
+            font-size: 1rem;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(234, 179, 8, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary:active { transform: scale(0.98); }
+        .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
+
+        .btn-secondary {
+            width: 100%;
+            background: transparent;
+            color: var(--gold-main);
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid var(--gold-main);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            display: block;
+            text-decoration: none;
+        }
+        .btn-secondary:active { background: rgba(234, 179, 8, 0.1); }
+
+        /* --- States & Utils --- */
+        .message-box {
+            display: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            text-align: center;
+            animation: fadeIn 0.3s ease;
+        }
+        .msg-error { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--error-red); }
+        .msg-success { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: var(--success-green); }
+
+        .spinner {
+            display: none;
+            width: 20px; height: 20px;
+            border: 3px solid rgba(0,0,0,0.1);
+            border-top: 3px solid var(--bg-dark);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Full Screen Loader (Initial Check) */
+        #page-loader {
+            position: fixed; inset: 0;
+            background: var(--bg-dark);
+            z-index: 100;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.4s ease;
+        }
+        
+        /* Animations */
+        @keyframes slideUpFade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(1.05); opacity: 1; } }
+        @keyframes softGlow { 0% { filter: drop-shadow(0 0 10px rgba(234, 179, 8, 0.2)); } 100% { filter: drop-shadow(0 0 25px rgba(234, 179, 8, 0.6)); } }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Typography overrides */
+        .title-gradient { background: linear-gradient(to right, #ffffff, #e0e0e0, var(--gold-light)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    </style>
+</head>
+<body>
+
+    <!-- Full Screen Initial Auth Loader -->
+    <div id="page-loader">
+        <div class="spinner" style="display: block; border-top-color: var(--gold-main); width: 30px; height: 30px;"></div>
+    </div>
+
+    <!-- Ambient Glows -->
+    <div class="ambient-glow-blue"></div>
+    <div class="ambient-glow-gold"></div>
+
+    <!-- Main Login Card -->
+    <div class="glass-card" id="loginCard" style="display: none;">
+        
+        <!-- Logo -->
+        <div class="logo-glow">
+            <img src="logo.png" alt="SHIKSHA HUB Logo" id="appLogo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIwIiBmaWxsPSIjZWFiMzA4Ii8+PHRleHQgeD0iNTAiIHk9IjU4IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMzUiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjMDMwNzEyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5TSDwvdGV4dD48L3N2Zz4='">
+        </div>
+
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-bold title-gradient mb-1">Welcome Back</h1>
+            <p class="text-sm text-gray-400">Log in to continue your learning journey</p>
+        </div>
+
+        <!-- Alert Message Box -->
+        <div id="alertBox" class="message-box"></div>
+
+        <form id="loginForm" novalidate>
+            <!-- Email Input -->
+            <div class="input-group">
+                <input type="email" id="email" class="premium-input" placeholder="Enter your email address" required autocomplete="email">
+                <!-- Mail Icon SVG -->
+                <svg class="input-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+            </div>
+
+            <!-- Password Input -->
+            <div class="input-group mb-2">
+                <input type="password" id="password" class="premium-input" placeholder="Enter your password" required autocomplete="current-password">
+                <!-- Lock Icon SVG -->
+                <svg class="input-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                </svg>
+                <!-- Eye Button -->
+                <button type="button" id="togglePassword" class="eye-btn" aria-label="Toggle password visibility">
+                    <svg id="eyeIconOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                    </svg>
+                    <svg id="eyeIconClosed" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Forgot Password Link -->
+            <div class="text-right mb-6">
+                <button type="button" id="forgotPasswordBtn" class="text-sm text-blue-400 hover:text-blue-300 transition-colors font-medium">Forgot Password?</button>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" id="loginBtn" class="btn-primary">
+                <span id="btnText">LOGIN</span>
+                <div id="btnSpinner" class="spinner ml-2"></div>
+            </button>
+        </form>
+
+        <div class="mt-8 mb-6 flex items-center justify-center space-x-2">
+            <div class="h-px w-full bg-white/10"></div>
+            <span class="text-xs text-gray-500 font-medium whitespace-nowrap">Don't have an account?</span>
+            <div class="h-px w-full bg-white/10"></div>
+        </div>
+
+        <!-- Create Account Button (Redirects only) -->
+        <button type="button" onclick="window.location.href='register.html'" class="btn-secondary">
+            CREATE NEW ACCOUNT
+        </button>
+
+    </div>
+
+    <!-- Firebase Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            signInWithEmailAndPassword, 
+            sendPasswordResetEmail,
+            signOut,
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Configuration provided
+        const firebaseConfig = {
+            apiKey: "AIzaSyDmZ4bKHE_siwDC5LGcobdxGeDSnVfiuHY",
+            authDomain: "bseb-b12ba.firebaseapp.com",
+            projectId: "bseb-b12ba",
+            storageBucket: "bseb-b12ba.firebasestorage.app",
+            messagingSenderId: "379716858804",
+            appId: "1:379716858804:web:e92eebd6843553084af8e1",
+            measurementId: "G-X49FDGMSN6"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // UI Elements
+        const pageLoader = document.getElementById('page-loader');
+        const loginCard = document.getElementById('loginCard');
+        const loginForm = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const loginBtn = document.getElementById('loginBtn');
+        const btnText = document.getElementById('btnText');
+        const btnSpinner = document.getElementById('btnSpinner');
+        const alertBox = document.getElementById('alertBox');
+
+        // Helper: Dynamic Routing Architecture Path Generator
+        function getDashboardPath(board, level) {
+            const boardFolder = {
+                "Bihar Board": "bihar",
+                "CBSE": "cbse",
+                "UP Board": "up"
+            }[board];
+
+            if (!boardFolder) {
+                throw new Error("Invalid board.");
+            }
+
+            if (level !== "matric" && level !== "inter") {
+                throw new Error("Invalid level.");
+            }
+
+            return `${boardFolder}/${level}/home.html`;
+        }
+        
+        // Initial Auth State Check & Firestore Profile Fetching
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // Ensure Loader is active while querying profile
+                pageLoader.style.display = 'flex';
+                pageLoader.style.opacity = '1';
+                loginCard.style.display = 'none';
+
+                try {
+                    // Fetch user profile from Firestore to determine correct Dashboard Route
+                    const docRef = doc(db, "users", user.uid);
+                    const docSnap = await getDoc(docRef);
+
+                    if (docSnap.exists()) {
+                        const userData = docSnap.data();
+                        
+                        // Execute routing logic to precise folder based on Board + Level
+                        const dashboardPath = getDashboardPath(userData.board, userData.level);
+                        window.location.replace(dashboardPath);
+                    } else {
+                        // Edge case: Auth created, but Firestore doc failed/missing
+                        await signOut(auth);
+                        showMessage("User profile not found. Please contact support.", "error");
+                        
+                        // Fallback UI reset
+                        pageLoader.style.opacity = '0';
+                        setTimeout(() => {
+                            pageLoader.style.display = 'none';
+                            loginCard.style.display = 'block';
+                        }, 400);
+                    }
+                } catch (error) {
+                    console.error("Profile Fetch Error:", error);
+                    await signOut(auth);
+                    showMessage("Error fetching profile. Please try logging in again.", "error");
+                    
+                    // Fallback UI reset
+                    pageLoader.style.opacity = '0';
+                    setTimeout(() => {
+                        pageLoader.style.display = 'none';
+                        loginCard.style.display = 'block';
+                    }, 400);
+                }
+            } else {
+                // Not authenticated, hide loader and show login form
+                pageLoader.style.opacity = '0';
+                setTimeout(() => {
+                    pageLoader.style.display = 'none';
+                    loginCard.style.display = 'block';
+                }, 400);
+            }
+        });
+
+        // Helper: Show Message
+        function showMessage(msg, type) {
+            alertBox.textContent = msg;
+            alertBox.className = `message-box ${type === 'error' ? 'msg-error' : 'msg-success'}`;
+            alertBox.style.display = 'block';
+        }
+        function hideMessage() {
+            alertBox.style.display = 'none';
+        }
+
+        // Helper: Map Firebase Errors to User-Friendly text
+        function getFriendlyErrorMessage(errorCode) {
+            switch (errorCode) {
+                case 'auth/invalid-credential':
+                case 'auth/user-not-found':
+                case 'auth/wrong-password':
+                    return "Invalid email or password. Please try again.";
+                case 'auth/invalid-email':
+                    return "Please enter a valid email address.";
+                case 'auth/too-many-requests':
+                    return "Too many failed attempts. Please try again later.";
+                case 'auth/network-request-failed':
+                    return "Network error. Please check your internet connection.";
+                default:
+                    return "An error occurred during login. Please try again.";
+            }
+        }
+
+        // UI: Toggle Password Visibility
+        document.getElementById('togglePassword').addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            if (type === 'text') {
+                document.getElementById('eyeIconOpen').classList.add('hidden');
+                document.getElementById('eyeIconClosed').classList.remove('hidden');
+            } else {
+                document.getElementById('eyeIconOpen').classList.remove('hidden');
+                document.getElementById('eyeIconClosed').classList.add('hidden');
+            }
+        });
+
+        // Action: Handle Login Submit
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideMessage();
+
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+
+            if (!email || !password) {
+                showMessage("Please fill in both email and password.", "error");
+                return;
+            }
+
+            // Set UI to loading state
+            loginBtn.disabled = true;
+            btnText.textContent = "LOGGING IN...";
+            btnSpinner.style.display = "block";
+
+            try {
+                // After successful sign in, the onAuthStateChanged listener triggers automatically
+                // and executes the Firestore profile fetch and dynamic routing.
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (error) {
+                console.error("Login Error:", error.code);
+                showMessage(getFriendlyErrorMessage(error.code), "error");
+                
+                // Reset UI state
+                loginBtn.disabled = false;
+                btnText.textContent = "LOGIN";
+                btnSpinner.style.display = "none";
+            }
+        });
+
+        // Action: Handle Forgot Password
+        document.getElementById('forgotPasswordBtn').addEventListener('click', async () => {
+            hideMessage();
+            const email = emailInput.value.trim();
+            
+            if (!email) {
+                showMessage("Please enter your email address in the field above first.", "error");
+                emailInput.focus();
+                return;
+            }
+
+            // Optional: Simple email regex validation before sending request
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showMessage("Please enter a valid email address.", "error");
+                return;
+            }
+
+            try {
+                // Show temporary feedback on the link itself
+                const btn = document.getElementById('forgotPasswordBtn');
+                const originalText = btn.textContent;
+                btn.textContent = "Sending...";
+                btn.style.pointerEvents = "none";
+
+                await sendPasswordResetEmail(auth, email);
+                showMessage("Password reset link sent! Check your inbox.", "success");
+                
+                btn.textContent = originalText;
+                btn.style.pointerEvents = "auto";
+            } catch (error) {
+                console.error("Reset Error:", error.code);
+                showMessage(getFriendlyErrorMessage(error.code), "error");
+                document.getElementById('forgotPasswordBtn').textContent = "Forgot Password?";
+                document.getElementById('forgotPasswordBtn').style.pointerEvents = "auto";
+            }
+        });
+    </script>
+</body>
+</html>
