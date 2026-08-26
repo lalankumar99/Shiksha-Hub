@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SHIKSHA HUB - Loading...</title>
+    
+    <!-- गूगल फॉन्ट्स (Google Fonts) शानदार टाइपोग्राफी के लिए -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* प्रीमियम कलर्स */
+            --bg-dark: #030712; /* बहुत गहरा नीला/काला */
+            --royal-blue: #1d4ed8;
+            --gold-light: #fef08a;
+            --gold-main: #eab308;
+            --gold-dark: #a16207;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden; /* स्प्लैश स्क्रीन पर स्क्रॉलिंग बंद */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* --- बैकग्राउंड के एम्बिएंट (Ambient) ग्लो इफेक्ट्स --- */
+        .ambient-glow-blue {
+            position: absolute;
+            width: 80vw;
+            height: 80vw;
+            max-width: 700px;
+            max-height: 700px;
+            background: radial-gradient(circle, rgba(29, 78, 216, 0.25) 0%, transparent 60%);
+            top: -20%;
+            left: -20%;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0;
+            animation: fadeInGlow 3s ease-out 0.2s forwards, floatMotion 10s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        .ambient-glow-gold {
+            position: absolute;
+            width: 60vw;
+            height: 60vw;
+            max-width: 500px;
+            max-height: 500px;
+            background: radial-gradient(circle, rgba(234, 179, 8, 0.15) 0%, transparent 70%);
+            bottom: -15%;
+            right: -15%;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0;
+            animation: fadeInGlow 3s ease-out 0.5s forwards, floatMotion 12s ease-in-out infinite reverse;
+            z-index: 1;
+        }
+
+        /* --- मुख्य कंटेनर (ग्लासमॉर्फिज़्म) --- */
+        .splash-content {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            width: 100%;
+            max-width: 500px;
+            /* हल्का ग्लास इफेक्ट */
+            background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 30px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            transform: scale(0.95) translateY(20px);
+            animation: containerReveal 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+        }
+
+        /* --- सिनेमैटिक टेक्स्ट एनिमेशन (Cinematic Text Animation) --- */
+        .hero-text-container {
+            display: flex;
+            gap: 4px; /* अक्षरों के बीच की जगह */
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        /* स्पेस के लिए क्लास */
+        .space-char {
+            width: 15px;
+        }
+
+        .char {
+            font-size: 2.8rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            /* टेक्स्ट में गोल्डन ग्रेडिएंट */
+            background: linear-gradient(to bottom right, #ffffff 20%, #e0e0e0 40%, var(--gold-light) 60%, var(--gold-main) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            
+            /* शुरुआत में अक्षर कैसे दिखेंगे */
+            opacity: 0;
+            transform: translateY(40px) translateZ(-50px) rotateX(-60deg) scale(0.8);
+            filter: blur(12px);
+            
+            /* एनिमेशन */
+            animation: letterReveal 1.2s cubic-bezier(0.2, 1, 0.2, 1) forwards;
+        }
+
+        /* अक्षरों पर लाइट स्वीप (Light Sweep) इफेक्ट */
+        .hero-text-container::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+            transform: skewX(-20deg);
+            animation: lightSweep 3s ease-in-out 2s infinite; /* 2 सेकंड बाद शुरू होगा */
+            pointer-events: none;
+            mix-blend-mode: overlay;
+        }
+
+        /* हर एक अक्षर के लिए अलग-अलग देरी (Staggered Delay) */
+        .char:nth-child(1) { animation-delay: 0.4s; } /* S */
+        .char:nth-child(2) { animation-delay: 0.5s; } /* H */
+        .char:nth-child(3) { animation-delay: 0.6s; } /* I */
+        .char:nth-child(4) { animation-delay: 0.7s; } /* K */
+        .char:nth-child(5) { animation-delay: 0.8s; } /* S */
+        .char:nth-child(6) { animation-delay: 0.9s; } /* H */
+        .char:nth-child(7) { animation-delay: 1.0s; } /* A */
+        
+        .char:nth-child(9) { animation-delay: 1.2s; } /* H */
+        .char:nth-child(10){ animation-delay: 1.3s; } /* U */
+        .char:nth-child(11){ animation-delay: 1.4s; } /* B */
+
+        /* --- टैगलाइन (Tagline) --- */
+        .tagline {
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            opacity: 0;
+            transform: translateY(15px);
+            letter-spacing: 1px;
+            animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 2.2s forwards;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        /* --- लोडिंग इंडिकेटर (Premium Loader) --- */
+        .loader-wrapper {
+            margin-top: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 10px;
+            opacity: 0;
+            animation: fadeUp 1s ease forwards 2.6s;
+        }
+
+        .progress-bar-container {
+            width: 150px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            width: 30%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--gold-main), transparent);
+            border-radius: 4px;
+            position: absolute;
+            left: -30%;
+            animation: progressLoop 1.5s ease-in-out infinite;
+        }
+
+        /* --- बैकग्राउंड पार्टिकल्स --- */
+        .particle {
+            position: absolute;
+            background: rgba(255, 215, 0, 0.5); /* सुनहरे पार्टिकल्स */
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 2;
+        }
+
+        /* --- कीफ्रेम्स (Keyframes for Animations) --- */
+        @keyframes containerReveal {
+            from { opacity: 0; transform: scale(0.95) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        @keyframes letterReveal {
+            to {
+                opacity: 1;
+                transform: translateY(0) translateZ(0) rotateX(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        @keyframes lightSweep {
+            0% { left: -100%; opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { left: 200%; opacity: 0; }
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInGlow {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes floatMotion {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.05); }
+        }
+
+        @keyframes progressLoop {
+            0% { left: -30%; width: 30%; }
+            50% { width: 50%; }
+            100% { left: 100%; width: 30%; }
+        }
+
+        @keyframes floatParticle {
+            0% { transform: translateY(0) scale(0); opacity: 0; }
+            20% { opacity: 1; scale: 1; }
+            80% { opacity: 1; }
+            100% { transform: translateY(-150px) scale(0); opacity: 0; }
+        }
+
+        /* पेज से बाहर जाने का एनिमेशन (Exit Animation) */
+        .page-exit {
+            opacity: 0;
+            transform: scale(1.1);
+            filter: blur(10px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* मोबाइल रेस्पॉन्सिव (Mobile adjustments) */
+        @media (max-width: 480px) {
+            .char { font-size: 2.2rem; }
+            .splash-content { padding: 2.5rem 1.5rem; border-radius: 20px; }
+            .tagline { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- बैकग्राउंड लाइट्स (Background Glows) -->
+    <div class="ambient-glow-blue"></div>
+    <div class="ambient-glow-gold"></div>
+
+    <!-- पार्टिकल्स के लिए कंटेनर (Particles Container) -->
+    <div id="particles-container"></div>
+
+    <!-- मुख्य स्प्लैश बॉक्स (Main Splash Content) -->
+    <div class="splash-content">
+        
+        <!-- एनिमेटेड टेक्स्ट (Animated Text) -->
+        <div class="hero-text-container">
+            <!-- SHIKSHA -->
+            <span class="char">S</span>
+            <span class="char">H</span>
+            <span class="char">I</span>
+            <span class="char">K</span>
+            <span class="char">S</span>
+            <span class="char">H</span>
+            <span class="char">A</span>
+            <!-- Space -->
+            <span class="space-char"></span>
+            <!-- HUB -->
+            <span class="char">H</span>
+            <span class="char">U</span>
+            <span class="char">B</span>
+        </div>
+
+        <!-- टैगलाइन -->
+        <p class="tagline">“पढ़ाई आसान, सफलता आसान।”</p>
+
+        <!-- प्रीमियम लोडिंग बार -->
+        <div class="loader-wrapper">
+            <div class="progress-bar-container">
+                <div class="progress-bar"></div>
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- फायरबेस ऑथेंटिकेशन और लॉजिक (Firebase SDK & Logic) -->
+    <script type="module">
+        // फायरबेस मॉड्युलर SDK को सीधे CDN से इंपोर्ट करें (Import Firebase Modular SDK)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        // फायरबेस कॉन्फ़िगरेशन (Firebase Configuration)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDmZ4bKHE_siwDC5LGcobdxGeDSnVfiuHY",
+            authDomain: "bseb-b12ba.firebaseapp.com",
+            projectId: "bseb-b12ba",
+            storageBucket: "bseb-b12ba.firebasestorage.app",
+            messagingSenderId: "379716858804",
+            appId: "1:379716858804:web:e92eebd6843553084af8e1",
+            measurementId: "G-X49FDGMSN6"
+        };
+
+        // फायरबेस इनिशियलाइज़ करें (Initialize Firebase)
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        /**
+         * टाइमर लॉजिक:
+         * हम चाहते हैं कि यूज़र कम से कम 3.8 सेकंड तक यह खूबसूरत सिनेमैटिक एनिमेशन देखे,
+         * भले ही फायरबेस ऑथेंटिकेशन तुरंत चेक हो जाए।
+         */
+        const minimumSplashDuration = 3800; // मिलीसेकंड्स (3.8 seconds)
+
+        const splashTimerPromise = new Promise((resolve) => {
+            setTimeout(resolve, minimumSplashDuration);
+        });
+
+        // फायरबेस ऑथेंटिकेशन चेक को प्रॉमिस (Promise) में रैप करें
+        const authStatePromise = new Promise((resolve) => {
+            const unsubscribe = onAuthStateChanged(auth, (user) => {
+                unsubscribe(); // एक बार चेक होने के बाद लिसनर हटा दें
+                resolve(user);
+            }, (error) => {
+                console.error("Firebase Auth Error:", error);
+                resolve(null); // अगर कोई एरर आए तो मान लें कि लॉग इन नहीं है
+            });
+        });
+
+        // दोनों काम (एनिमेशन का समय + फायरबेस चेक) पूरे होने का इंतज़ार करें
+        Promise.all([splashTimerPromise, authStatePromise]).then(([_, user]) => {
+            executeRouting(user);
+        });
+
+        // रीडायरेक्ट करने वाला फंक्शन (Routing Function)
+        function executeRouting(user) {
+            // बाहर जाने का एनिमेशन लगाएँ (Apply exit animation)
+            document.body.classList.add('page-exit');
+            
+            // एनिमेशन खत्म होने के बाद पेज बदलें
+            setTimeout(() => {
+                if (user) {
+                    console.log("यूज़र लॉग इन है। Home पर जा रहे हैं...");
+                    window.location.replace("home.html");
+                } else {
+                    console.log("यूज़र लॉग इन नहीं है। Login पर जा रहे हैं...");
+                    window.location.replace("login.html");
+                }
+            }, 600); // 600ms CSS ट्रांज़िशन के समय से मेल खाता है
+        }
+
+        // --- विज़ुअल इफ़ेक्ट: बैकग्राउंड में तैरने वाले सुनहरे पार्टिकल्स (Gold Particles) ---
+        function createParticles() {
+            const container = document.getElementById('particles-container');
+            const particleCount = 20; // पार्टिकल्स की संख्या
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // रैंडम साइज़, पोजीशन और समय
+                const size = Math.random() * 3 + 1; // 1px से 4px तक
+                const posX = Math.random() * window.innerWidth;
+                const posY = Math.random() * window.innerHeight;
+                const delay = Math.random() * 4; // 0 से 4 सेकंड की देरी
+                const duration = Math.random() * 5 + 3; // 3 से 8 सेकंड का एनिमेशन
+
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${posX}px`;
+                particle.style.top = `${posY}px`;
+                particle.style.animation = `floatParticle ${duration}s ease-in-out ${delay}s infinite`;
+
+                container.appendChild(particle);
+            }
+        }
+        
+        // पार्टिकल्स जनरेट करें
+        createParticles();
+
+    </script>
+</body>
+</html>

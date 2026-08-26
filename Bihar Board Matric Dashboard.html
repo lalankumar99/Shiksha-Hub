@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>SHIKSHA HUB - Bihar Board</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Phosphor Icons (Premium App Icons) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        :root {
+            --bg-dark: #030712;
+            --bg-darker: #02040a;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --gold-light: #fef08a;
+            --gold-main: #eab308;
+            --gold-dark: #ca8a04;
+            --royal-blue: #1d4ed8;
+            --royal-blue-light: #3b82f6;
+            --text-main: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            user-select: none; /* App-like feel */
+        }
+
+        /* --- Ambient Backgrounds --- */
+        .ambient-glow-blue {
+            position: fixed; width: 100vw; height: 50vh;
+            background: radial-gradient(ellipse at top, rgba(29, 78, 216, 0.15) 0%, transparent 70%);
+            top: 0; left: 0; pointer-events: none; z-index: 0;
+        }
+
+        /* --- Glassmorphism UI --- */
+        .glass-panel {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* --- App Header --- */
+        .app-header {
+            position: fixed; top: 0; left: 0; right: 0;
+            height: 60px; z-index: 50;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 1rem; border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-top: env(safe-area-inset-top);
+            box-sizing: content-box;
+        }
+
+        .header-logo { width: 32px; height: 32px; border-radius: 8px; filter: drop-shadow(0 0 8px rgba(234, 179, 8, 0.3)); }
+        
+        /* --- Main Content Area --- */
+        .main-content {
+            position: relative; z-index: 10;
+            padding-top: calc(75px + env(safe-area-inset-top));
+            padding-bottom: calc(80px + var(--safe-bottom));
+            padding-left: 1rem; padding-right: 1rem;
+            max-width: 600px; margin: 0 auto;
+        }
+
+        /* --- Cards & Grid --- */
+        .welcome-card {
+            border-radius: 20px; padding: 1.5rem; position: relative; overflow: hidden;
+            background: linear-gradient(135deg, rgba(29, 78, 216, 0.2), rgba(3, 7, 18, 0));
+        }
+        .welcome-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--royal-blue-light), transparent); opacity: 0.5;
+        }
+
+        .action-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 1.5rem; }
+        .action-btn {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 12px 5px; border-radius: 16px; transition: all 0.2s ease;
+            gap: 8px; text-align: center;
+        }
+        .action-btn:active { transform: scale(0.95); background: rgba(255,255,255,0.08); }
+        .action-icon { font-size: 1.5rem; color: var(--gold-main); }
+        .action-label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); }
+
+        .subject-card {
+            display: flex; align-items: center; padding: 1rem; border-radius: 16px;
+            margin-bottom: 0.75rem; transition: transform 0.2s;
+        }
+        .subject-card:active { transform: scale(0.98); }
+        .subject-icon-wrap {
+            width: 44px; height: 44px; border-radius: 12px;
+            background: rgba(234, 179, 8, 0.1); color: var(--gold-main);
+            display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+            margin-right: 1rem;
+        }
+
+        /* --- Horizontal Scroller --- */
+        .horizontal-scroll {
+            display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
+            gap: 12px; padding-bottom: 10px; margin: 0 -1rem; padding-left: 1rem; padding-right: 1rem;
+            scrollbar-width: none; /* Firefox */
+        }
+        .horizontal-scroll::-webkit-scrollbar { display: none; /* Chrome/Safari */ }
+        .scroll-card {
+            min-width: 240px; scroll-snap-align: start; border-radius: 16px; padding: 1.25rem;
+            background: linear-gradient(to bottom right, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+        }
+
+        /* --- Bottom Navigation --- */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+            background: rgba(3, 7, 18, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            display: flex; justify-content: space-around; align-items: center;
+            padding-bottom: var(--safe-bottom); height: calc(65px + var(--safe-bottom));
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 100%; height: 100%; color: var(--text-muted); transition: color 0.2s; cursor: pointer;
+        }
+        .nav-item.active { color: var(--gold-main); }
+        .nav-icon { font-size: 1.4rem; margin-bottom: 4px; }
+        .nav-label { font-size: 0.65rem; font-weight: 600; }
+
+        /* --- Utilities & States --- */
+        .section-title { font-size: 1.1rem; font-weight: 700; margin: 2rem 0 1rem 0; display: flex; align-items: center; justify-content: space-between; }
+        .see-all { font-size: 0.75rem; color: var(--royal-blue-light); font-weight: 600; text-transform: uppercase; }
+        
+        .badge {
+            background: rgba(234, 179, 8, 0.2); color: var(--gold-main);
+            padding: 2px 8px; border-radius: 20px; font-size: 0.65rem; font-weight: 700;
+        }
+
+        /* Full Screen States (Loader & Error) */
+        .fullscreen-overlay {
+            position: fixed; inset: 0; z-index: 100;
+            background: var(--bg-dark); display: flex; flex-direction: column;
+            align-items: center; justify-content: center; padding: 2rem; text-align: center;
+        }
+        .spinner {
+            width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1);
+            border-top: 4px solid var(--gold-main); border-radius: 50%;
+            animation: spin 1s linear infinite; margin-bottom: 1rem;
+        }
+
+        /* Profile Modal */
+        .profile-modal {
+            position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+            display: none; align-items: flex-end; opacity: 0; transition: opacity 0.3s;
+        }
+        .profile-content {
+            width: 100%; background: var(--bg-darker); border-top-left-radius: 24px; border-top-right-radius: 24px;
+            padding: 2rem 1.5rem calc(2rem + var(--safe-bottom)); border-top: 1px solid rgba(255,255,255,0.1);
+            transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.5s ease forwards; }
+
+        /* Hide elements initially */
+        #appUI { display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- 1. Loading Overlay -->
+    <div id="loaderOverlay" class="fullscreen-overlay">
+        <div class="spinner"></div>
+        <h2 class="text-lg font-bold text-white mb-1">SHIKSHA HUB</h2>
+        <p class="text-sm text-gray-400">Loading your learning dashboard...</p>
+    </div>
+
+    <!-- 2. Security Error Overlay -->
+    <div id="errorOverlay" class="fullscreen-overlay" style="display: none;">
+        <i class="ph-fill ph-warning-circle text-5xl text-red-500 mb-4"></i>
+        <h2 class="text-xl font-bold text-white mb-2">Access Denied</h2>
+        <p class="text-sm text-gray-400 mb-6" id="errorText">You do not have permission to view this specific dashboard.</p>
+        <button onclick="window.location.replace('../../login.html')" class="px-6 py-3 rounded-xl bg-royal-blue text-white font-bold w-full max-w-xs shadow-lg shadow-blue-500/30">
+            RETURN TO LOGIN
+        </button>
+    </div>
+
+    <!-- 3. MAIN APP UI -->
+    <div id="appUI">
+        <div class="ambient-glow-blue"></div>
+
+        <!-- App Header -->
+        <header class="app-header glass-panel">
+            <div class="flex items-center gap-3">
+                <img src="../../logo.png" alt="Logo" class="header-logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIwIiBmaWxsPSIjZWFiMzA4Ii8+PHRleHQgeD0iNTAiIHk9IjU4IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMzUiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjMDMwNzEyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5TSDwvdGV4dD48L3N2Zz4='">
+                <div>
+                    <h1 class="text-sm font-bold text-white leading-tight">SHIKSHA HUB</h1>
+                    <p class="text-[0.65rem] text-gold-main font-semibold" id="headerSubtitle">Bihar Board • Loading...</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <i class="ph ph-bell text-xl text-gray-300 relative cursor-pointer" onclick="alert('No new notifications')">
+                    <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+                </i>
+                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-gold-main to-gold-light flex items-center justify-center text-bg-dark font-bold cursor-pointer" onclick="openProfile()">
+                    <span id="userInitial">S</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Scrollable -->
+        <main class="main-content">
+            
+            <!-- Welcome Card -->
+            <div class="welcome-card glass-panel fade-in" style="animation-delay: 0.1s;">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-xs text-blue-300 font-semibold mb-1">GOOD MORNING</p>
+                        <h2 class="text-2xl font-bold text-white mb-2" id="welcomeName">Student 👋</h2>
+                        <div class="badge inline-block" id="welcomeClassBadge">Class --</div>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
+                        <i class="ph-fill ph-student text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions Grid -->
+            <div class="action-grid fade-in" style="animation-delay: 0.2s;">
+                <div class="action-btn glass-panel">
+                    <i class="ph-fill ph-notebook action-icon"></i>
+                    <span class="action-label">Notes</span>
+                </div>
+                <div class="action-btn glass-panel">
+                    <i class="ph-fill ph-file-text action-icon"></i>
+                    <span class="action-label">PYQ</span>
+                </div>
+                <div class="action-btn glass-panel">
+                    <i class="ph-fill ph-check-square-offset action-icon"></i>
+                    <span class="action-label">MCQ</span>
+                </div>
+                <div class="action-btn glass-panel">
+                    <i class="ph-fill ph-exam action-icon"></i>
+                    <span class="action-label">Tests</span>
+                </div>
+                <div class="action-btn glass-panel">
+                    <i class="ph-fill ph-book-open action-icon"></i>
+                    <span class="action-label">Syllabus</span>
+                </div>
+                <div class="action-btn glass-panel">
+                    <i class="ph-fill ph-star action-icon"></i>
+                    <span class="action-label">VVI Qs</span>
+                </div>
+            </div>
+
+            <!-- Learning Progress -->
+            <h3 class="section-title fade-in" style="animation-delay: 0.3s;">Your Progress</h3>
+            <div class="glass-panel rounded-2xl p-4 flex justify-around text-center fade-in" style="animation-delay: 0.3s;">
+                <div>
+                    <p class="text-2xl font-bold text-white" id="statTests">0</p>
+                    <p class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-wider">Tests Done</p>
+                </div>
+                <div class="w-px bg-white/10"></div>
+                <div>
+                    <p class="text-2xl font-bold text-white" id="statMCQ">0</p>
+                    <p class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-wider">MCQs Solved</p>
+                </div>
+                <div class="w-px bg-white/10"></div>
+                <div>
+                    <p class="text-2xl font-bold text-gold-main" id="statOverall">0%</p>
+                    <p class="text-[0.65rem] font-semibold text-gray-400 uppercase tracking-wider">Overall</p>
+                </div>
+            </div>
+
+            <!-- Dynamic Subjects Section -->
+            <h3 class="section-title fade-in" style="animation-delay: 0.4s;">
+                <span>Your Subjects</span>
+                <span class="see-all">View All</span>
+            </h3>
+            <div id="subjectContainer" class="fade-in" style="animation-delay: 0.4s;">
+                <!-- Subjects will be injected here dynamically by Firebase data -->
+            </div>
+
+            <!-- Recent Study Material (Horizontal Scroll) -->
+            <h3 class="section-title fade-in" style="animation-delay: 0.5s;">Continue Learning</h3>
+            <div class="horizontal-scroll fade-in" style="animation-delay: 0.5s;">
+                <div class="scroll-card glass-panel flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="badge bg-blue-500/20 text-blue-400">MATHS</span>
+                            <i class="ph-fill ph-play-circle text-2xl text-white"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-white mb-1">Real Numbers</h4>
+                        <p class="text-xs text-gray-400">Chapter 1 • 0% completed</p>
+                    </div>
+                </div>
+                <div class="scroll-card glass-panel flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="badge bg-green-500/20 text-green-400">SCIENCE</span>
+                            <i class="ph-fill ph-file-pdf text-2xl text-white"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-white mb-1">Chemical Reactions</h4>
+                        <p class="text-xs text-gray-400">Chapter 1 Notes</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <div class="nav-item active">
+                <i class="ph-fill ph-house nav-icon"></i>
+                <span class="nav-label">Home</span>
+            </div>
+            <div class="nav-item">
+                <i class="ph ph-books nav-icon"></i>
+                <span class="nav-label">Study</span>
+            </div>
+            <div class="nav-item">
+                <i class="ph ph-exam nav-icon"></i>
+                <span class="nav-label">Test</span>
+            </div>
+            <div class="nav-item" onclick="openProfile()">
+                <i class="ph ph-user nav-icon"></i>
+                <span class="nav-label">Profile</span>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Profile & Logout Modal -->
+    <div id="profileModal" class="profile-modal" onclick="closeProfile(event)">
+        <div class="profile-content glass-panel" id="profileContent" onclick="event.stopPropagation()">
+            <div class="w-12 h-1 rounded-full bg-white/20 mx-auto mb-6"></div>
+            
+            <div class="flex items-center gap-4 mb-6 pb-6 border-b border-white/10">
+                <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-gold-main to-gold-light flex items-center justify-center text-2xl text-bg-dark font-bold shadow-lg shadow-gold-main/20">
+                    <span id="modalInitial">S</span>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-1" id="modalName">Student Name</h3>
+                    <p class="text-xs text-gray-400" id="modalEmail">student@email.com</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 mb-8">
+                <div class="bg-white/5 p-3 rounded-xl border border-white/5">
+                    <p class="text-[0.65rem] text-gray-400 font-semibold mb-1 uppercase">Board</p>
+                    <p class="font-bold text-sm text-white">Bihar Board</p>
+                </div>
+                <div class="bg-white/5 p-3 rounded-xl border border-white/5">
+                    <p class="text-[0.65rem] text-gray-400 font-semibold mb-1 uppercase">Level</p>
+                    <p class="font-bold text-sm text-white uppercase">Matric</p>
+                </div>
+                <div class="bg-white/5 p-3 rounded-xl border border-white/5 col-span-2">
+                    <p class="text-[0.65rem] text-gray-400 font-semibold mb-1 uppercase">Class Context</p>
+                    <p class="font-bold text-sm text-gold-main" id="modalClass">Loading...</p>
+                </div>
+            </div>
+
+            <button id="logoutBtn" class="w-full bg-red-500/10 border border-red-500/30 text-red-500 font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all active:bg-red-500/20">
+                <i class="ph-bold ph-sign-out text-lg"></i>
+                LOGOUT
+            </button>
+        </div>
+    </div>
+
+
+    <!-- Application Logic (Firebase & Architecture) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // 1. Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyDmZ4bKHE_siwDC5LGcobdxGeDSnVfiuHY",
+            authDomain: "bseb-b12ba.firebaseapp.com",
+            projectId: "bseb-b12ba",
+            storageBucket: "bseb-b12ba.firebasestorage.app",
+            messagingSenderId: "379716858804",
+            appId: "1:379716858804:web:e92eebd6843553084af8e1",
+            measurementId: "G-X49FDGMSN6"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // UI Elements Mapping
+        const els = {
+            loader: document.getElementById('loaderOverlay'),
+            error: document.getElementById('errorOverlay'),
+            appUI: document.getElementById('appUI'),
+            headerSub: document.getElementById('headerSubtitle'),
+            userInitials: [document.getElementById('userInitial'), document.getElementById('modalInitial')],
+            welcomeName: document.getElementById('welcomeName'),
+            welcomeClass: document.getElementById('welcomeClassBadge'),
+            modalName: document.getElementById('modalName'),
+            modalEmail: document.getElementById('modalEmail'),
+            modalClass: document.getElementById('modalClass'),
+            subjectContainer: document.getElementById('subjectContainer'),
+            logoutBtn: document.getElementById('logoutBtn')
+        };
+
+        // 2. Dashboard Content Architecture Matrix
+        // Separating Class 9 and Class 10 content explicitly.
+        const contentMatrix = {
+            "9th": [
+                { name: "Mathematics", icon: "ph-calculator", color: "blue", desc: "Ganit • Class 9" },
+                { name: "Science", icon: "ph-flask", color: "green", desc: "Vigyan • Class 9" },
+                { name: "Social Science", icon: "ph-globe-hemisphere-west", color: "orange", desc: "Samajik Vigyan • Class 9" },
+                { name: "Hindi", icon: "ph-translate", color: "red", desc: "Godhuli & Vartika" },
+                { name: "English", icon: "ph-book-bookmark", color: "purple", desc: "Panorama Part 1" },
+                { name: "Sanskrit", icon: "ph-scroll", color: "yellow", desc: "Piyusham Part 1" }
+            ],
+            "10th": [
+                { name: "Mathematics", icon: "ph-calculator", color: "blue", desc: "Ganit • Class 10 (Board Exam)" },
+                { name: "Science", icon: "ph-flask", color: "green", desc: "Vigyan • Class 10 (Board Exam)" },
+                { name: "Social Science", icon: "ph-globe-hemisphere-west", color: "orange", desc: "Samajik Vigyan • Class 10" },
+                { name: "Hindi", icon: "ph-translate", color: "red", desc: "Godhuli & Vartika Part 2" },
+                { name: "English", icon: "ph-book-bookmark", color: "purple", desc: "Panorama Part 2" },
+                { name: "Sanskrit", icon: "ph-scroll", color: "yellow", desc: "Piyusham Part 2" }
+            ]
+        };
+
+        // 3. Security Guards & Initialization
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                // Not logged in -> Redirect to login root
+                window.location.replace("../../login.html");
+                return;
+            }
+
+            try {
+                // Fetch User Profile from Firestore
+                const userDocRef = doc(db, "users", user.uid);
+                const userDocSnap = await getDoc(userDocRef);
+
+                if (!userDocSnap.exists()) {
+                    throw new Error("Profile not found");
+                }
+
+                const userData = userDocSnap.data();
+
+                // STRICT ROUTING VALIDATION: Ensure user belongs to THIS specific dashboard
+                if (userData.board !== "Bihar Board" || userData.level !== "matric") {
+                    showError("You do not belong to the Bihar Board Matric dashboard.");
+                    return;
+                }
+
+                // Ensure class is exactly 9th or 10th
+                if (userData.class !== "9th" && userData.class !== "10th") {
+                    showError("Invalid Class configuration for Matric dashboard.");
+                    return;
+                }
+
+                // Authentication & Validation Passed -> Render UI
+                renderDashboard(userData, user);
+
+            } catch (error) {
+                console.error("Dashboard Load Error:", error);
+                showError("Unable to load profile data. Please try again.");
+            }
+        });
+
+        // 4. Render Logic (Dynamic Injection)
+        function renderDashboard(userData, authUser) {
+            const studentClass = userData.class; // Will be strictly "9th" or "10th"
+            
+            // Populate Text Data
+            const initial = userData.name ? userData.name.charAt(0).toUpperCase() : 'S';
+            els.userInitials.forEach(el => el.textContent = initial);
+            
+            els.welcomeName.textContent = `${userData.name.split(' ')[0]} 👋`;
+            els.headerSub.textContent = `Bihar Board • Class ${studentClass}`;
+            els.welcomeClass.textContent = `Class ${studentClass}`;
+            
+            els.modalName.textContent = userData.name;
+            els.modalEmail.textContent = authUser.email;
+            els.modalClass.textContent = `Class ${studentClass} (Content Key: bihar_matric_${studentClass.replace('th','')})`;
+
+            // Populate Class-Specific Subjects dynamically
+            els.subjectContainer.innerHTML = '';
+            const subjectsToRender = contentMatrix[studentClass];
+            
+            subjectsToRender.forEach(sub => {
+                const card = document.createElement('div');
+                card.className = "subject-card glass-panel flex justify-between";
+                card.innerHTML = `
+                    <div class="flex items-center">
+                        <div class="subject-icon-wrap" style="background: rgba(var(--tw-colors-${sub.color}-500), 0.1); color: rgb(var(--tw-colors-${sub.color}-400));">
+                            <i class="ph-fill ${sub.icon}"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white text-sm">${sub.name}</h4>
+                            <p class="text-[0.65rem] text-gray-400 mt-0.5">${sub.desc}</p>
+                        </div>
+                    </div>
+                    <i class="ph-bold ph-caret-right text-gray-500"></i>
+                `;
+                els.subjectContainer.appendChild(card);
+            });
+
+            // Transition UI State
+            els.loader.style.opacity = '0';
+            setTimeout(() => {
+                els.loader.style.display = 'none';
+                els.appUI.style.display = 'block';
+            }, 300);
+        }
+
+        // 5. Error Handler
+        function showError(message) {
+            document.getElementById('errorText').textContent = message;
+            els.loader.style.display = 'none';
+            els.error.style.display = 'flex';
+        }
+
+        // 6. Logout Handler
+        els.logoutBtn.addEventListener('click', async () => {
+            try {
+                els.logoutBtn.innerHTML = '<div class="spinner border-t-red-500 w-5 h-5 mx-auto m-0"></div>';
+                await signOut(auth);
+                window.location.replace("../../login.html");
+            } catch (error) {
+                console.error("Logout Error:", error);
+                alert("Error logging out. Please try again.");
+                els.logoutBtn.innerHTML = '<i class="ph-bold ph-sign-out text-lg"></i> LOGOUT';
+            }
+        });
+
+        // 7. UI Interactivity (Profile Modal)
+        window.openProfile = function() {
+            const modal = document.getElementById('profileModal');
+            const content = document.getElementById('profileContent');
+            modal.style.display = 'flex';
+            // slight delay to allow display:flex to register before animating opacity/transform
+            requestAnimationFrame(() => {
+                modal.style.opacity = '1';
+                content.style.transform = 'translateY(0)';
+            });
+        }
+
+        window.closeProfile = function(event) {
+            if (event && event.target.id !== 'profileModal') return;
+            const modal = document.getElementById('profileModal');
+            const content = document.getElementById('profileContent');
+            content.style.transform = 'translateY(100%)';
+            modal.style.opacity = '0';
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        }
+    </script>
+</body>
+</html>
